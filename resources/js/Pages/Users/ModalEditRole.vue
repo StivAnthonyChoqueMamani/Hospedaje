@@ -43,7 +43,7 @@ import JetDialogModal from "@/Jetstream/DialogModal";
 import JetButton from "@/Jetstream/Button";
 
 export default {
-  name: "users.modal-edit-role",
+  name: "ModalEditRole",
   emits: ["close"],
   components: {
     JetDialogModal,

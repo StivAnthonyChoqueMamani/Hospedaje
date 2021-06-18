@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BedroomController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -32,4 +33,8 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/users', [UserController::class, 'index'])->name('index.user');
 Route::middleware(['auth:sanctum', 'verified'])->get('/role', [RoleController::class, 'index'])->name('index.role');
-Route::middleware(['auth:sanctum', 'verified'])->put('/update_role_to_user/{id}',[UserController::class, 'update_role'])->name('update_role.user');
+Route::middleware(['auth:sanctum', 'verified'])->put('/update_role_to_user/{id}', [UserController::class, 'update_role'])->name('update_role.user');
+Route::middleware(['auth:sanctum', 'verified'])->get('/bedrooms', [BedroomController::class, 'index'])->name('index.bedroom');
+Route::middleware(['auth:sanctum', 'verified'])->get('/bedrooms/{search}/{column}', [BedroomController::class, 'search'])->name('search.bedroom');
+Route::middleware(['auth:sanctum', 'verified'])->post('/bedrooms',[BedroomController::class, 'store'])->name('store.bedroom');
+Route::middleware(['auth:sanctum', 'verified'])->put('/bedrooms/{id}',[BedroomController::class, 'update'])->name('update.bedroom');

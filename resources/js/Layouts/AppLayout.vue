@@ -23,6 +23,9 @@
                                 <jet-nav-link :href="route('index.user')" :active="route().current('index.user')">
                                     Users
                                 </jet-nav-link>
+                                <jet-nav-link :href="route('index.bedroom')" :active="route().current('index.bedroom')">
+                                    Bedrooms
+                                </jet-nav-link>
                             </div>
                         </div>
 
@@ -150,6 +153,11 @@
                     <div class="pt-2 pb-3 space-y-1">
                         <jet-responsive-nav-link :href="route('index.user')" :active="route().current('index.user')">
                             Users
+                        </jet-responsive-nav-link>
+                    </div>
+                    <div class="pt-2 pb-3 space-y-1">
+                        <jet-responsive-nav-link :href="route('index.bedroom')" :active="route().current('index.bedroom')">
+                            bedrooms
                         </jet-responsive-nav-link>
                     </div>
 
