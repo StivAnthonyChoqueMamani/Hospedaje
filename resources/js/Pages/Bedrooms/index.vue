@@ -49,22 +49,39 @@
                       </thead>
                       <tbody class="bg-white divide-y divide-gray-200">
                         <tr v-for="(item, index) in ListBedrooms.data" :key="index">
-                          <td class="px-6 py-4 whitespace-nowrap text-center "> {{ item.nro }} </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center "> {{ item.nro_beds }} </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center "> {{ item.size_beds }} </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center "> {{ item.floor }} </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center "> {{ item.is_bath }} </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center "> {{ item.price }} </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <button class="bg-gray-500 hover:bg-gray-700 py-1 px-1 text-white rounded" @click="edit_bedroom(item)">
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center "> {{ item.nro }} </td>
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center ">
+                            {{item.nro_beds}} {{" "}}<i class="fas fa-bed fa-1x" style="color:#767777"></i>
+                          </td>
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center "> {{ item.size_beds }} </td>
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center "> {{ item.floor }} </td>
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center ">
+                            <div v-if="item.is_bath"  >
+                              <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg> -->
+                              <i class="fas fa-toilet-paper fa-2x" style="color:blue"></i>
+                            </div>
+                            <div v-else>
+                              <i class="fas fa-toilet-paper-slash fa-2x" style="color:red "></i>
+                            </div>
+                          </td>
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center "> {{ item.price }} </td>
+                          <td v-if="item.status=='available' || item.status=='undefined'" class="px-6 py-4 whitespace-nowrap text-center">
+                            <button @click="edit_bedroom(item)" class="bg-gray-500 hover:bg-gray-700 py-1 px-1 text-white rounded" >
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
-                            <button class="bg-blue-500 hover:bg-blue-700 py-1 px-1 m-1 text-white rounded-lg" @click="view_bedroom(index,item,$event)">
+                            <button @click="view_bedroom(index,item,$event)" class="bg-blue-500 hover:bg-blue-700 py-1 px-1 m-1 text-white rounded" >
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </button>
+                            <button @click="drop_bedroom(item)" class="bg-red-500 hover:bg-red-700 py-1 px-1 text-white rounded">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
                             </button>
                           </td>
@@ -95,7 +112,13 @@
     </div>
     <modal-create-bedroom :show="showModalCreate" @close="showModalCreate=false" :options_size_beds="enum_size_beds" :last_page_url="bedrooms.last_page_url" />
     <modal-view-bedroom :show="showModalView" @close="showModalView=false" :bedroom="bedroom_view" />
-    <modal-edit-bedroom :show="showModalEdit" @close="showModalEdit=false" :bedroom="bedroom_edit" :bedroom_static="bedroom_static" :options_size_beds="enum_size_beds"/>
+    <modal-edit-bedroom 
+      @close="showModalEdit=false"
+      :show="showModalEdit" 
+      :bedroom="bedroom_edit" 
+      :bedroom_static="bedroom_static" 
+      :options_size_beds="enum_size_beds" 
+    />
   </app-layout>
 </template>
 
@@ -117,6 +140,14 @@ export default {
     enum_size_beds: {
       type: Array,
       default:null
+    },
+    enum_status: {
+      type: Array,
+      default:null
+    },
+    bedroom_editado: {
+      type: Object,
+      default:null  
     },
   },
 
@@ -153,14 +184,7 @@ export default {
       showModalView: false,
       bedroom_view: null,
       showModalEdit: false,
-      bedroom_edit: {
-        nro:'',
-        nro_beds:'',
-        size_beds:'',
-        is_bath:'',
-        floor:'',
-        price:'',
-      },
+      bedroom_edit: null,
       bedroom_static: null,
     }
   },
@@ -174,8 +198,6 @@ export default {
       if(this.search==null){
         param.search='na'
       }
-      console.log(param)
-      // Inertia.get(`bedrooms/${param.search}/${param.column}`,{
       Inertia.get(this.route('search.bedroom',[param.search,param.column]),{
         onSuccess:(page)=>{
           console.log(page)
@@ -194,9 +216,35 @@ export default {
     },
     edit_bedroom(data){
       this.bedroom_edit = JSON.parse(JSON.stringify(data))
-      this.bedroom_static = JSON.parse(JSON.stringify(data))
-      this.showModalEdit = true      
-    }
+      this.bedroom_static = data
+      this.showModalEdit = true
+    },
+    
+    drop_bedroom(data){
+      this.$swal({
+        title: 'Está seguro?',
+        text: "Puedes revertirlo cualquier momento!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Si, borralo!'
+      }).then((result) => {
+        console.log(data.id)
+        if(result.isConfirmed) {
+          Inertia.delete(this.route('destroy.bedroom',data.id),{
+            onSuccess: (response)=>{
+              console.log(response)
+              this.$swal('Eliminado!','La habitacion ha sido eliminado','success')
+              data.status = "not available"
+            },
+            onError: (errors)=>{
+              console.log(errors)
+            }
+          })
+        }
+      })
+    },
   },
 };
 </script>

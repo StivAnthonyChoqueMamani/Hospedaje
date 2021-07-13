@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreBedroomRequest extends FormRequest
 {
@@ -24,8 +26,12 @@ class StoreBedroomRequest extends FormRequest
      */
     public function rules()
     {
+        $rule_nro_unique = Rule::unique('bedrooms','nro');
+        if($this->method()!=='POST'){
+            $rule_nro_unique->ignore($this->id);
+        }
         return [
-            'nro' => 'required|unique:bedrooms,nro',
+            'nro' => ['required',$rule_nro_unique],
             'nro_beds' => 'required',
             'size_beds' => 'required',
             'floor' => 'required',

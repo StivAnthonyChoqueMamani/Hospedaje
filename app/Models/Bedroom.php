@@ -10,11 +10,19 @@ class Bedroom extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nro', 'nro_beds', 'size_beds', 'floor', 'price', 'is_bath'];
+    protected $fillable = ['nro', 'nro_beds', 'size_beds', 'floor', 'price', 'is_bath','status'];
 
     public static function get_enum_values_size_beds()
     {
         $type = DB::select(DB::raw("SHOW COLUMNS FROM bedrooms WHERE FIELD = 'size_beds'"))[0]->Type;
+        preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
+        $enum = explode("','", $matches[1]);
+        return $enum;
+    }
+
+    public static function get_enum_values_status()
+    {
+        $type = DB::select(DB::raw("SHOW COLUMNS FROM bedrooms WHERE FIELD = 'status'"))[0]->Type;
         preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
         $enum = explode("','", $matches[1]);
         return $enum;

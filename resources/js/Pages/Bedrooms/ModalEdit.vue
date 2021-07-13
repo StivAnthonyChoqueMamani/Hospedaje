@@ -26,9 +26,19 @@
             <jet-input id="floor" type="text" class="mt-1 block " v-model="bedroom.floor" required />
           </div>
           <div class="col-span-6">
-            <label class="flex items-center">
-              <input type="checkbox" id="checkbox" v-model="bedroom.is_bath" />
+            <label class="flex items-center" @click="bedroom.is_bath = !bedroom.is_bath">
+              <!-- <input type="checkbox" id="checkbox" v-model="bedroom.is_bath" /> -->
               <!-- <jet-checkbox name="is_bath" v-model:checked="bedroom.is_bath" /> -->
+              <div v-if="bedroom.is_bath">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div v-else>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
               <span class="ml-2 text-sm text-gray-600">Tiene baño?</span>
             </label>
           </div>
@@ -38,7 +48,6 @@
           </div>
         </div>
       </form>
-      {{bedroom.is_bath}}
     </template>
 
     <template #footer>
@@ -57,9 +66,12 @@ import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import JetInput from '@/Jetstream/Input'
 import JetButton from '@/Jetstream/Button'
+import { Inertia } from '@inertiajs/inertia'
 export default {
   name: 'ModalEditBedroom',
   
+  emits: ['close','update'],
+
   components: {
     JetDialogModal,
     JetLabel,
@@ -87,12 +99,15 @@ export default {
   data(){
     return {
       form: this.$inertia.form({
-        nro: this.bedroom.nro,
-        nro_beds: this.bedroom.nro_beds,
-        size_beds: this.bedroom.size_beds,
-        floor: this.bedroom.floor,
-        is_bath: this.bedroom.is_bath,
-        price: this.bedroom.price,
+        id: '',
+        nro: '',
+        nro_beds: '',
+        size_beds: '',
+        floor: '',
+        is_bath: '',
+        price: '',
+        created_at: '',
+        updated_at: '',
       }),
     }
   },
@@ -100,14 +115,38 @@ export default {
   methods: {
     closeModal() {
       this.$emit('close')
-      // this.form.reset()
+      this.form.reset()
     },
     submit(){
+      this.form.id = this.bedroom.id
+      this.form.nro = this.bedroom.nro
+      this.form.nro_beds = this.bedroom.nro_beds
+      this.form.size_beds = this.bedroom.size_beds
+      this.form.floor = this.bedroom.floor
+      this.form.is_bath = this.bedroom.is_bath
+      this.form.price = this.bedroom.price
+      this.form.created_at = this.bedroom.created_at
+      this.form.updated_at = this.bedroom.updated_at
+      
       this.form.put(this.route('update.bedroom',this.bedroom.id),{
-        onSuccess:(response)=>{
-          console.log(response.data)
+        onSuccess:response=>{
+          console.log(response)
+          this.$swal({
+            icon: "success",
+            title: "Operación Exitoso!",
+            text: "La habitación ha sido modificado con exito."
+          })
           this.closeModal()
-        }
+          this.bedroom_static.nro_beds = this.bedroom.nro_beds
+          this.bedroom_static.size_beds = this.bedroom.size_beds
+          this.bedroom_static.floor = this.bedroom.floor
+          this.bedroom_static.is_bath = this.bedroom.is_bath
+          this.bedroom_static.price = this.bedroom.price
+        },
+        onError: errors => {
+          console.log(errors)
+          this.form.reset ()
+        },
       })
     },
   },
@@ -185,17 +224,19 @@ export default {
       }
     },
 
-    check(){
-      if(this.bedroom != null){
-        if(this.bedroom.is_bath){
-          this.bedroom.is_bath = true
-        }else{
-          this.bedroom.is_bath = false
-        }
-      }else{
-        return null
-      }
-    },
+    // check(){
+    //   if(this.bedroom != null){
+    //     if(this.bedroom.is_bath){
+    //       this.bedroom.is_bath = true
+    //       return true
+    //     }else{
+    //       this.bedroom.is_bath = false
+    //       return false
+    //     }
+    //   }else{
+    //     return null
+    //   }
+    // },
   },
 }
 </script>

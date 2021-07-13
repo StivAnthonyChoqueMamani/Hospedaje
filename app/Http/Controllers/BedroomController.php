@@ -6,6 +6,9 @@ use App\Http\Requests\StoreBedroomRequest;
 use App\Models\Bedroom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class BedroomController extends Controller
@@ -17,9 +20,17 @@ class BedroomController extends Controller
      */
     public function index()
     {
-        $bedrooms = Bedroom::paginate(4);
-        $enum = Bedroom::get_enum_values_size_beds();
-        return Inertia::render('Bedrooms/index', ['bedrooms' => $bedrooms, 'enum_size_beds' => $enum]);
+        $bedrooms = Bedroom::
+            where('status', 'available')
+            ->orWhere('status', 'undefined')
+            ->paginate(4);
+        $enum_size_beds = Bedroom::get_enum_values_size_beds();
+        $enum_status = Bedroom::get_enum_values_status();
+        return Inertia::render('Bedrooms/index', [
+            'bedrooms' => $bedrooms, 
+            'enum_size_beds' => $enum_size_beds,
+            'enum_status' => $enum_status,
+        ]);
     }
 
     /**
@@ -94,10 +105,13 @@ class BedroomController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreBedroomRequest $request,Bedroom $bedroom)
+    public function update(StoreBedroomRequest $request,Bedroom $id)
     {
-        $validated = $request->validated();
-        return $validated;
+        $validateData = $request->validated();
+        $changes = array_diff($id->toArray(),$validateData);
+        $id->update($validateData);
+        // return redirect(URL::previous());
+        return Redirect::to(URL::previous())->with(['bedroom_editado'=>$id]);
     }
 
     /**
@@ -106,8 +120,10 @@ class BedroomController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Bedroom $id)
     {
-        //
+        $id->status = "not available";
+        $id->save();
+        return Redirect::to(URL::previous());
     }
 }
